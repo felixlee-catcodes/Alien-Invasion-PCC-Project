@@ -16,7 +16,7 @@ class AlienInvasion:
         pygame.init()
         self.settings = Settings()
 
-        self.screen = pygame.display.set_mode((0,0), pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
         pygame.display.set_caption("Alien Invasion")
@@ -53,6 +53,7 @@ class AlienInvasion:
         elif event.key == pygame.K_q:
             sys.exit()    
         elif event.key == pygame.K_SPACE:
+            print(self.aliens)
             self._fire_bullet()    
 
     def _check_keyup_events(self, event):
@@ -79,9 +80,23 @@ class AlienInvasion:
 
     def _create_fleet(self):
         """Create the fleet of aliens."""
-        # Make an alien:
+        # Create an alien and find the number of aliens in a row.
+        # Spacing between each alien is equal to one alien width.
         alien = Alien(self)
-        self.aliens.add(alien)
+        alien_width = alien.rect.width
+        available_space_x = self.settings.screen_width - (2 * alien_width)
+        number_aliens_x = available_space_x // (2 * alien_width)
+        print(f"Available space: {available_space_x}\nNumber of aliens: {number_aliens_x}")
+
+        # Create the first row of aliens:
+        for alien_number in range(number_aliens_x):
+            # Create an alien and place it in the row:
+            alien = Alien(self)
+            alien.x = alien_width + 2 * alien_width * alien_number
+            alien.rect.x = alien.x
+            self.aliens.add(alien)
+
+        print(self.aliens)    
 
     def _update_screen(self):
     # Redraw the screen during each loop pass thru
@@ -90,7 +105,7 @@ class AlienInvasion:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
 
-        self.aliens.draw(self.screen)    
+        self.aliens.draw(self.screen)   
         # Make the most recently drawn screen visible.
         pygame.display.flip()
    
