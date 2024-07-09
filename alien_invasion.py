@@ -5,6 +5,7 @@ import pygame
 
 from settings import Settings
 from game_stats import GameStats
+from scoreboard import Scoreboard
 from button import Button
 from ship import Ship
 from bullet import Bullet
@@ -26,6 +27,7 @@ class AlienInvasion:
 
         # Create an instance to store game statistics:
         self.stats = GameStats(self)
+        self.sb = Scoreboard(self)
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
@@ -67,7 +69,7 @@ class AlienInvasion:
         if button_clicked and not self.stats.game_active:
             # Reset the game's settings:
             self.settings.initialize_dynamic_settings()
-            
+
             # Reset the game statistics:
             self.stats.reset_stats()
             self.stats.game_active = True
@@ -91,7 +93,6 @@ class AlienInvasion:
         elif event.key == pygame.K_q:
             sys.exit()    
         elif event.key == pygame.K_SPACE:
-            print(self.aliens)
             self._fire_bullet()    
 
     def _check_keyup_events(self, event):
@@ -220,7 +221,10 @@ class AlienInvasion:
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
 
-        self.aliens.draw(self.screen)   
+        self.aliens.draw(self.screen) 
+
+        # Draw the score information:
+        self.sb.show_score()  
 
         # Draw the play button if the game is inactive:
         if not self.stats.game_active:
